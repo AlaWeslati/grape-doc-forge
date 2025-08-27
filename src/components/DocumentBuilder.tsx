@@ -9,15 +9,17 @@ export const DocumentBuilder = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!editorRef.current) {
-      console.log('Editor ref is null');
-      return;
-    }
+    const initializeEditor = () => {
+      if (!editorRef.current) {
+        console.log('Editor ref is null, retrying...');
+        setTimeout(initializeEditor, 100);
+        return;
+      }
 
-    console.log('Initializing GrapeJS...');
-    
-    try {
-      const editorInstance = grapesjs.init({
+      console.log('Initializing GrapeJS...');
+      
+      try {
+        const editorInstance = grapesjs.init({
         container: editorRef.current,
         height: '100vh',
         width: '100%',
@@ -68,7 +70,10 @@ export const DocumentBuilder = () => {
       setIsLoading(false);
       toast.error('Failed to load document builder');
     }
-  }, []);
+  };
+
+  initializeEditor();
+}, []);
 
   const handleSave = () => {
     if (!editor) return;
